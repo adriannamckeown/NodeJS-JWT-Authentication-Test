@@ -42,7 +42,7 @@ app.post('/api/login', (req, res) => {
 
     for (let user of users) {
         if (username == user.username && password == user.password) {
-            let token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '7d'});
+            let token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '3m'});
             res.json({
                 success: true,
                 err: null,
@@ -63,7 +63,14 @@ app.post('/api/login', (req, res) => {
 app.get('/api/dashboard', jwtMW, (req, res) => {
     res.json({
         success: true,
-        myContent: 'Secret content that only logged in people can see.'
+        myContent: 'Secret content that only logged in people can see!!'
+    });
+});
+
+app.get('/api/settings', jwtMW, (req, res) => {
+    res.json({
+        success: true,
+        myContent: 'Settings that only logged in people can access'
     });
 });
 
@@ -72,7 +79,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(function (err, req, res, next) {
-    if (err.name == 'UnauthorizedError') {
+    if (err.name === 'UnauthorizedError') {
         res.status(401).json({
             success: false,
             officialError: err,
